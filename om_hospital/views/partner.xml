@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- changer ordre de l'affichage (phone,email ==> email,phone)-->
+        <record id="view_partner_tree_inherit" model="ir.ui.view">
+            <field name="name">res.partner</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <!-- <field name="phone" position="before">
+                    <field name="email" position="move"/>
+                </field> -->
+                <xpath expr="//field[@name='phone']" position="before">
+                    <field name="email" position="move"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="action_confirm_appointments" model="ir.actions.server">
+        <field name="name">Confirm Appointment</field>
+        <field name="type">ir.actions.server</field>
+        <field name="model_id" ref="model_hospital_appointment"/>
+        <field name="binding_model_id" ref="model_hospital_appointment"/>
+        <field name="state">code</field>
+        <!-- records: ckeckbox sur la liste, action_confirm(): fonction dans "hospital_appointment.py" -->
+        <field name="code">records.action_confirm()</field>
+    </record>
 
     <!-- KANBAN VIEW -->
     <record id="view_appointment_kanban" model="ir.ui.view">
@@ -37,14 +46,20 @@
         <field name="name">hospital.appointment.tree</field>
         <field name="model">hospital.appointment</field>
         <field name="arch" type="xml">
-            <tree>
+        <!-- multi_edit="1": select et edit multiple line -->
+            <tree multi_edit="1">
+                <header>
+                    <button name="action_done" string="Mark As Done" type="object" class="btn-primary"/>
+                </header>
                 <field name="name"/>
+                <field name="doctor_id"/>
                 <field name="patient_id"/>
-                <field name="gender"/>
-                <field name="age"/>
-                <field name="date_appointment" />
-                <field name="date_checkup" />
-                <field name="note"/>
+                <field name="gender" optional="hide"/>
+                <field name="age" optional="show"/>
+                <field name="date_appointment" optional="show"/>
+                <field name="date_checkup" optional="hide"/>
+                <field name="note" optional="show"/>
+                <field name="state" optional="show"/>
             </tree>
         </field>
     </record>
@@ -60,6 +75,7 @@
                     <button id="button_done" name="action_done" string="Mark As Done" type="object" class="btn-primary" states="confirm"/>
                     <button id="button_draft" name="action_draft" string="Set to Draft" type="object" class="btn-primary" states="cancel"/>
                     <button id="button_cancel" name="action_cancel" string="Cancel" type="object" states="draft,done,confirm" confirm="Are you sure that you need to cancel?"/>
+                    <button name="action_url" string="Open URL" type="object" class="btn-primary"/>
                     <field name="state" widget="statusbar" options="{'clickable':'1'}" statusbar_visible="draft,done,confirm"/>
                 </header>
                 <sheet>
@@ -76,11 +92,45 @@
                             <field name="age"/>
                         </group>
                         <group>
+                            <field name="doctor_id"/>
                             <field name="date_appointment"/>
                             <field name="date_checkup" />
-                            <field name="note"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page name="docor_prescripion" string="Doctor Prescription">
+                            <!-- group: affiche le label ou string dans la classe -->
+                            <group>
+                                <field name="prescription" />
+                            </group>
+                        </page>
+                        <page name="medicine" string="Medicine">
+                            <field name="prescription_line_ids">
+                                <!-- tree: afficher le string sur la classe au colonne du table -->
+                                <!-- editable="bottom" ou "top": permet de creer en cliquent sur le line du table -->
+                                <tree editable="top">
+                                    <field name="name" />
+                                    <field name="qty" />
+                                </tree>
+                                <!-- form: modifier le form, enlever le choix name=reference car automatique  -->
+                                <form>
+                                    <group>
+                                        <group>
+                                            <field name="name" />
+                                        </group>
+                                        <group>
+                                            <field name="qty" />
+                                        </group>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page name="auther_info" string="Auther Info">
+                            <group>
+                                <field name="note"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids"/>
@@ -88,7 +138,7 @@
                     <field name="message_ids"/>
                 </div>
             </form>
-        </field>  
+        </field>
     </record>
 
     <!-- SEARCH -->
@@ -102,6 +152,10 @@
                 <group expand="1" string="Group By">
                     <filter name="patient_id" string="Patient" context="{'group_by': 'patient_id'}"/>
                 </group>
+                <searchpanel>
+                    <field name="state" string="Status" select="multi" enable_counters="1" />
+                    <field name="doctor_id" string="Doctor" icon="fa-exchange"/>
+                </searchpanel>
             </search>
         </field>
     </record>
@@ -125,16 +179,22 @@
         name="Appointments"
         parent="menu_hospital_root"
         sequence="20"/>
-    
+
     <menuitem id="menu_appointment"
         name="Appointments"
         parent="menu_appointment_root"
         action="action_hospital_appointment"
         sequence="10"/>
-    
+
     <menuitem id="menu_create_appointment"
         name="Create Appointments"
         parent="menu_appointment_root"
         action="action_create_appointment"
+        sequence="20"/>
+
+    <menuitem id="menu_search_appointment"
+        name="Search Appointments"
+        parent="menu_appointment_root"
+        action="action_search_appointment"
         sequence="30"/>
 </odoo>

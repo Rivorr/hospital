@@ -1,3 +1,5 @@
+import string
+from odoo.exceptions import ValidationError
 from odoo import api, fields, models, api,_
 from datetime import datetime, date
 
@@ -6,15 +8,17 @@ class HospitalAppointment(models.Model):
     _name = 'hospital.appointment'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Hospital Appointment'
+    _order = "doctor_id,age,name"
 
 
     name = fields.Char(string="Order Reference",required=True,copy=False,readonly=True,default=lambda self: _('New'))
     patient_id = fields.Many2one('hospital.patient',string='Patient', required=True)
-    age = fields.Integer(string='Age', related='patient_id.age', tracking=True)
+    age = fields.Integer(string='Age', related='patient_id.age', tracking=True, store=True)
+    doctor_id = fields.Many2one('hospital.doctor',string='Doctor', required=True)
     gender = fields.Selection([
         ('male','Male'),
         ('female','Female'),
-        ('auther','auther')],string='Sexe')
+        ('auther','auther')],string='Gender')
     state = fields.Selection([
             ('draft', 'Draft'),
             ('confirm', 'Confirmed'),
@@ -23,6 +27,8 @@ class HospitalAppointment(models.Model):
     note = fields.Text(string='Description')
     date_appointment = fields.Date(string='Date')
     date_checkup = fields.Datetime(string="Check Up Time")
+    prescription = fields.Text(string="Prescription")
+    prescription_line_ids = fields.One2many('appointment.prescription.lines','appointment_id',string="Prescription Lines")
 
 
     def action_confirm(self):
@@ -30,10 +36,10 @@ class HospitalAppointment(models.Model):
 
     def action_done(self):
         self.state = 'done'
-    
+
     def action_draft(self):
         self.state = 'draft'
-    
+
     def action_cancel(self):
         self.state = 'cancel'
 
@@ -45,7 +51,7 @@ class HospitalAppointment(models.Model):
             vals['name'] = self.env['ir.sequence'].next_by_code('hospital.appointment') or _('New')
         res = super(HospitalAppointment,self).create(vals)
         return res
-    
+
     # (onechange = related --> recuperer la valeur dans l'autre table(relation))
     @api.onchange('patient_id')
     def onchange_patient_id(self):
@@ -57,3 +63,26 @@ class HospitalAppointment(models.Model):
         else:
             self.gender = ''
             self.note = ''
+
+    # Controler la suppression
+    def unlink(self):
+        if self.state == 'done':
+            raise ValidationError(_("on ne peut pas supprimer %s car son state est Done" % self.name))
+        return super(HospitalAppointment, self).unlink()
+
+    def action_url(self):
+        module_name = 'om_hospital'
+        return {
+            'type': 'ir.actions.act_url',
+            'target': 'new',
+            'url': 'https://apps.odoo.com/apps/modules/14.0/%s/' % self.prescription,
+        }
+
+
+class AppointmentPrescriptionLines(models.Model):
+    _name = 'appointment.prescription.lines'
+    _description = 'Appointment Prescription Lines'
+
+    name = fields.Char(string="Medicine",required=True)
+    qty = fields.Integer(string="Quantity")
+    appointment_id = fields.Many2one('hospital.appointment',string="Appointment")

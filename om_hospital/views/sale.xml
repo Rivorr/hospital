@@ -9,7 +9,7 @@
                 <field name="partner_id" position="after">
                     <field name="sale_description" />
                 </field>
-            </field>  
+            </field>
         </record>
 
         <record id="view_order_tree_inherit" model="ir.ui.view">
@@ -20,7 +20,14 @@
                 <field name="partner_id" position="after">
                     <field name="sale_description" />
                 </field>
-            </field>  
+            </field>
         </record>
+
+        <!-- Ajouter Appointment dans le menu de vente -->
+        <menuitem id="menu_sale_appointment"
+            name="Appointments"
+            parent="sale.sale_order_menu"
+            sequence="2"
+            action="action_hospital_appointment"/>
     </data>
 </odoo>
