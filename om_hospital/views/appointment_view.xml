@@ -184,7 +184,7 @@
         name="Appointments"
         parent="menu_appointment_root"
         action="action_hospital_appointment"
-        sequence="10"/>
+        sequence="10"/> 
 
     <menuitem id="menu_create_appointment"
         name="Create Appointments"

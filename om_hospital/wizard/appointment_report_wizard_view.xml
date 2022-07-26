@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_report_appointment_form" model="ir.ui.view">
+        <field name="name">appointment.report.wizard.form</field>
+        <field name="model">appointment.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Print Appointments">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="patient_id" />
+                        </group>
+                        <group>
+                            <field name="date_from" />
+                            <field name="date_to" />
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_print_report" type="object" string="Print" class="btn-primary"/>
+                        <button special="cancel" string="Cancel" class="btn-secondary"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_report_appointments" model="ir.actions.act_window">
+        <field name="name">Appointments</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">appointment.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_report_appointment_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_reporting"
+        name="Reporting"
+        parent="menu_hospital_root"
+        sequence="20"/>
+    
+    <menuitem id="menu_appointment_reporting"
+        name="Appointments"
+        parent="menu_reporting"
+        action="action_report_appointments"
+        sequence="20"/>
+</odoo>

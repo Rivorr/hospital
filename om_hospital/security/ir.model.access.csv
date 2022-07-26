@@ -5,3 +5,7 @@ access_hospital_appointment,access.hospital_appointment,model_hospital_appointme
 access_create_appointment_wizard,access.create.appointment.wizard,model_create_appointment_wizard,,1,1,1,1
 access_search_appointment_wizard,access.search.appointment.wizard,model_search_appointment_wizard,,1,1,1,1
 access_appointment_prescription_lines,access.appointment.prescription.lines,model_appointment_prescription_lines,,1,1,1,1
+access_appointment_report_wizard,access_appointment_report_wizard,model_appointment_report_wizard,,1,1,1,1
+access_patient_report_wizard,access_patient_report_wizard,model_patient_report_wizard,,1,1,1,1
+access_report_om_hospital_report_all_patient_list,access_report_om_hospital_report_all_patient_list,model_report_om_hospital_report_all_patient_list,,1,1,1,1
+

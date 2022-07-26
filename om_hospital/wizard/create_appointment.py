@@ -12,6 +12,7 @@ class CreateAppointmentWizard(models.TransientModel):
 
     date_appointment = fields.Date(string='Date', required=False, tracking=True)
     patient_id = fields.Many2one('hospital.patient',string='Patient', required=True)
+    doctor_id = fields.Many2one('hospital.doctor',string='Doctor', required=True)
 
     # recuper la valeur de field dans le form et info de ce form (lang,uid,modele,activ_id)
     @api.model
@@ -27,7 +28,7 @@ class CreateAppointmentWizard(models.TransientModel):
         print("click Me")
         vals = {
             'patient_id': self.patient_id.id,
-            'doctor_id': 2,
+            'doctor_id': self.doctor_id.id,
             'date_appointment': self.date_appointment
                 }
         appointment_rec = self.env['hospital.appointment'].create(vals)

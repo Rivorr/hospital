@@ -33,6 +33,10 @@
         'report/report.xml',
         'report/patient_details_template.xml',
         'report/patient_card.xml',
+        'report/appointment_details.xml',
+        'report/all_patient_list.xml',
+        'wizard/appointment_report_wizard_view.xml',
+        'wizard/all_patient_report_view.xml',
     ],
     'demo': [
         'demo/demo.xml',
